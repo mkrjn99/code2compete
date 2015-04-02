@@ -29,7 +29,7 @@ public:
             rep(j,0,d){
                 t[i][j]=0;
                 rep(k,0,d){
-                    t[i][j]+=(a[i][k]*b.a[k][j])%mod;
+                    t[i][j]=(t[i][j]+a[i][k]*b.a[k][j])%mod;
                 }
             }
         }
