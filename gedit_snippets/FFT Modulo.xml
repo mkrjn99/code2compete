@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>fftm</tag>
+    <description>FFT Modulo</description>
+    <text><![CDATA[
+template<class T> class FFT_Module_Modulo{
+    T modulo;
+    int maxn;
+    T root;
+    bool ispowerof2(int x){
+        return !(x&(x-1));
+    }
+    int nextpowerof2(int x){
+        return 1<<(int(log2(x))+1);
+    }
+    T nthroot(int n){
+        return fastexp<ll>(root,maxn/n,modulo);
+    }
+public:
+    FFT_Module_Modulo(T modulo,int maxn,T root):modulo(modulo),maxn(maxn),root(root){
+    }
+    void fft(const vector<T> &v,T w,vector<T> &f,vector<T> &t,int idx=0,int diff=1){
+        int i,N=v.size();
+        if(idx+diff>=N){
+            f[idx]=v[idx]%modulo;
+            return;
+        }
+        int diff_2=diff<<1;
+        int M=N/diff_2;
+        T w2=(ll(w)*w)%modulo;
+        fft(v,w2,t,f,idx,diff_2);
+        fft(v,w2,t,f,idx+diff,diff_2);
+        T x=1;
+        rep(i,0,M){
+            f[idx+diff*i]=(t[idx+diff_2*i]+ll(x)*t[idx+diff+diff_2*i])%modulo;
+            f[idx+diff*(i+M)]=(t[idx+diff_2*i]-ll(x)*t[idx+diff+diff_2*i])%modulo;
+            x=(ll(x)*w)%modulo;
+        }
+    }
+    void polynomial_multiply(vector<T> &a,vector<T> &b,vector<T> &output){
+        static vector<T> t1,t2;
+        int n=a.size(),m=n,i;
+        if(!ispowerof2(n)) m<<=1;
+        m=nextpowerof2(m);
+        a.resize(m);b.resize(m);
+        t1.resize(m);t2.resize(m);output.resize(m);
+        fill(a.begin()+n, a.end(), 0);
+        fill(b.begin()+n, b.end(), 0);
+        T w=nthroot(m);
+        fft(a,w,t1,output);
+        fft(b,w,t2,output);
+        rep(i,0,m)
+            t1[i]=(ll(t1[i])*t2[i])%modulo;
+        T w_inv=fastexp<ll>(w,m-1,modulo);
+        fft(t1,w_inv,output,t2);
+        ll inv_m=fastexp<ll>(m,modulo-2,modulo);
+        rep(i,0,m){
+            output[i]=(output[i]*inv_m)%modulo;
+            output[i]=(output[i]<0)?output[i]+modulo:output[i];
+        }
+        //Resizing original vectors
+        output.resize(n+n);
+        a.resize(n);
+        b.resize(n);
+    }
+};
+]]></text>
+  </snippet>
+</snippets>

@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>egcd</tag>
+    <description>Extended Euclidean</description>
+    <text><![CDATA[
+struct egcd_struct{
+    ll g,x,y;
+    egcd_struct(int g,int x,int y):g(g),x(x),y(y){}
+};
+
+egcd_struct egcd(int a,int b){
+    if(b==0)
+        return egcd_struct(a,1,0);
+    else{
+        egcd_struct t = egcd(b,a%b);
+        return egcd_struct(t.g,t.y,t.x-(a/b)*t.y);
+    }
+}
+]]></text>
+  </snippet>
+</snippets>

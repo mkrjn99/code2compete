@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>bit</tag>
+    <description>BIT</description>
+    <text><![CDATA[
+template<class T> class BIT{
+    vector<T> a;
+    int N;
+public:
+    BIT(int N):N(N){
+        a.resize(N+1);
+        int i;
+        rep(i,1,N+1)
+            a[i]=0;
+    }
+    ///CAUTION:indices are 1-based
+    void update(int pos,T x){
+        while(pos<=N){
+            a[pos]+=x;
+            pos+=(pos&(-pos));
+        }
+    }
+    T read(int pos){
+        T s=0;
+        while(pos){
+            s+=a[pos];
+            pos&=pos-1;
+        }
+        return s;
+    }
+};
+]]></text>
+  </snippet>
+</snippets>

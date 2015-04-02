@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>mos</tag>
+    <description>Mo's Algorithm</description>
+    <text><![CDATA[
+namespace mo{
+    int n;
+    struct query{
+        int l,r,idx;
+    };
+
+    bool comp(const query &a,const query &b){
+        return (a.l/n<b.l/n) || ((a.l/n==b.l/n)&&(a.r<b.r));
+    }
+
+    int l,r;
+    void addleft(){
+        
+    }
+
+    void addright(){
+        
+    }
+
+    void removeleft(){
+        
+    }
+
+    void removeright(){
+        
+    }
+
+    ${1:answer_type} getanswer(){
+        
+    }
+
+    void execute(const int N, vector<query> &q, vector<$1> &ans){
+        int i,Q=q.size();
+        n=sqrt(N);
+        sort(q.begin(), q.end(), comp);
+        l=0;r=-1;
+        rep(i,0,Q){
+            while(l>q[i].l)
+                addleft();
+            while(r<q[i].r)
+                addright();
+            while(l<q[i].l)
+                removeleft();
+            while(r>q[i].r)
+                removeright();
+            ans[q[i].idx]=getanswer();
+        }
+    }
+};
+]]></text>
+  </snippet>
+</snippets>

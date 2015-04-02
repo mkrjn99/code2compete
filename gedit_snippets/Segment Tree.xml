@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>segtree</tag>
+    <description>Segment Tree</description>
+    <text><![CDATA[
+class SegmentTree{
+    element_type *a;
+    int N;
+    // Declare tree and lazy
+    SegmentTree(element_type *a, int N):a(a),N(N){
+        // Initialize tree
+        // Initialize lazy
+    }
+    void build(int cur,int i,int j){                                //O(nlgn)
+        if(i==j){
+            // Leaf case
+            // Initialize current node
+        }
+        else{
+            // Internal node case
+            int k=(i+j)/2;
+            build(2*cur,i,k);build(2*cur+1,k+1,j);
+            // Initialize current node
+        }
+    }
+    query_answer_type query(int i,int j,int cur,int a,int b){        //O(lgn)
+        if(a>=i && b<=j){
+            // current range lies completely inside given range
+        }
+        else if(b<i || a>j){
+            // current range lies completely outside given range
+        }
+        else{
+            // current range overlaps with given range
+        }
+    }
+    void update(int i,int j,int cur,int a,int b,update_type op){    //O(lgn)
+        if(a>=i && b<=j){
+            // current range lies completely inside given range
+        }
+        else if(b<i || a>j){
+            // current range lies completely outside given range
+        }
+        else{
+            // current range overlaps with given range
+        }
+    }
+    void remove_laziness(int cur,int a,int b){                        //O(1)
+        // remove laziness at lazy[cur]
+    }
+    void update_laziness(int cur,int a,int b,update_type op){        //O(1)
+        // commute op with lazy[cur]
+    }
+};
+]]></text>
+  </snippet>
+</snippets>

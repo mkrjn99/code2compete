@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>crt</tag>
+    <description>CRT</description>
+    <text><![CDATA[
+//Let N%p=m,N%q=n;then this returns N%pq
+ll crt(ll p,ll m,ll q,ll n){
+    //N=px+m;N=-qy+n => px+qy = n-m
+    if(m<0) m+=p;
+    if(n<0) n+=q;
+    if(n<m){
+        swap(p,q);
+        swap(m,n);
+    }
+    egcd_struct t=egcd(p,q);
+    if(t.g==1){
+        ll pro=p*q;
+        ll ans=(p*t.x)%pro;
+        if(ans<0)
+            ans+=pro;
+        ans=mul(ans,(n-m),pro)+m;
+        if(ans>=pro) ans-=pro;
+        if(ans<0) ans+=pro;
+        return ans;
+    }
+    else
+        return -1;
+}
+]]></text>
+  </snippet>
+</snippets>

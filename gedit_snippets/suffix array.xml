@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>sarray</tag>
+    <description>suffix array</description>
+    <text><![CDATA[
+void radix_sort(vector<pair<pi,int> > &v){
+    int N=v.size(),i;
+    
+    vector<int> t(N+1,0);
+    vector<pair<pi,int> > temp(N);
+    
+    rep(i,0,N)
+        t[v[i].first.second]++;
+    rep(i,1,N+1)
+        t[i]+=t[i-1];
+    for(i=N-1;i>=0;i--){
+        temp[--t[v[i].first.second]]=v[i];
+    }
+    
+    fill(t.begin(),t.end(),0);
+    
+    rep(i,0,N)
+        t[temp[i].first.first]++;
+    rep(i,2,N+1)
+        t[i]+=t[i-1];
+    for(i=N-1;i>=0;i--){
+        v[--t[temp[i].first.first]]=temp[i];
+    }
+}
+
+struct SuffixArrayStruct{
+    const char *s;
+    int N;
+    vector<int *> v;
+    SuffixArrayStruct(const char *s,int N):s(s),N(N){
+        int i,j;
+        for(j=0;j<=N;){
+            if(j)
+                j<<=1;
+            else
+                j=1;
+            int *t=new int[N];
+            if(j==1){
+                vector<int> v;v.resize(256);
+                rep(i,0,N)
+                    v[s[i]]++;
+                int te=v[0];v[0]=1;
+                rep(i,1,256){
+                    if(v[i]){
+                        int t2=v[i];
+                        v[i]=te+1;
+                        te+=t2;
+                    }
+                }
+                rep(i,0,N)
+                    t[i]=v[s[i]];
+            }
+            else
+                improve(v.back(),j/2,v.back(),t);
+            v.pb(t);
+        }
+    }
+    ~SuffixArrayStruct(){
+        tr(it,v)
+            delete[] *it;
+    }
+    void improve(const int *a,int x,const int *b,int *c){
+        static vector<pair<pi,int > > z;
+        z.resize(N);
+        int i,k;
+        rep(i,0,N)
+            z[i] = mp(mp(a[i], ((i+x<N)?b[i+x]:0) ),i);
+        radix_sort(z);
+//        sort(z.begin(), z.end());
+        k=1;
+        c[z[0].second] = k++;
+        rep(i,1,N){
+            if(z[i].first==z[i-1].first)
+                c[z[i].second]=c[z[i-1].second];
+            else
+                c[z[i].second]=k;
+            k++;
+        }
+    }
+    int *suffix_array(int *a){
+        int *r=v.back(),i;
+        rep(i,0,N)
+            a[r[i]-1]=i;
+        return a;
+    }
+    int *lcp(int *a,int *lcp){
+        int *r=v.back(),i,j,k,l=0;lcp[0]=0;
+        rep(i,0,N){
+            k=r[i]-1;
+            if(k==0)
+                continue;
+            j=a[k-1];
+            while(i+l<N && j+l<N && s[i+l]==s[j+l])
+                l++;
+            lcp[k]=l;
+            if(l>0) l--;
+        }
+        return lcp;
+    }
+};
+]]></text>
+  </snippet>
+</snippets>

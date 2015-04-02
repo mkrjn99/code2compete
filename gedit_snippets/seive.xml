@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>seive</tag>
+    <description>seive</description>
+    <text><![CDATA[
+#define MAXN ${1:MAXN}
+static int A[MAXN+1],p[MAXN],pc;
+void buildseive(){
+    static int i,j;
+    for(i=2;i<=MAXN;i++){
+        if(!A[i]){
+            p[++pc]=i;
+            A[i]=pc;
+        }
+        for(j=1;j<=A[i] && i*p[j]<=MAXN;j++)
+            A[i*p[j]]=j;
+    }
+}
+]]></text>
+  </snippet>
+</snippets>

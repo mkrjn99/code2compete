@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>union_find</tag>
+    <description>Union-Find</description>
+    <text><![CDATA[
+class union_find{
+    //0-indexed
+    int n;
+    vector<int> a;
+public:
+    union_find(int n):n(n){
+        //Initially every element is its own representative.
+        a.reserve(n);
+        int i;
+        rep(i,0,n)
+            a.pb(i);
+    }
+    
+    /*
+     * Set and return the representative of the
+     * set to which index x belongs. 
+     */
+    int find(int x){
+        int p=x;
+        while(p!=a[p])
+            p=a[p];
+        while(x!=p){
+            a[x]=p;
+            x=a[x];
+        }
+        return p;
+    }
+    
+    /*
+     * Unite set with child element to
+     * set with parent element.
+     * return true if union was done
+     * return false if already part of same set
+     */
+    bool unite(int parent,int child){
+        parent=find(parent);
+        child =find(child);
+        if(child==parent)
+            return false;
+        else{
+            a[child]=parent;
+            return true;
+        }
+    }
+};
+]]></text>
+  </snippet>
+</snippets>

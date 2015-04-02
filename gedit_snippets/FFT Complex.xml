@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>fftc</tag>
+    <description>FFT Complex</description>
+    <text><![CDATA[
+template<class ld> class FFT_Module_Complex{
+    typedef complex<ld> cld;
+    bool ispowerof2(int x){
+        return !(x&(x-1));
+    }
+    int nextpowerof2(int x){
+        return 1<<(int(log2(x))+1);
+    }
+    cld nthroot(int n){
+        ld rad=2*PI/n;
+        return cld(cos(rad),sin(rad));
+    }
+public:
+    FFT_Module_Complex(){
+    }
+    void fft(const vector<cld> &v,cld w,vector<cld> &f,vector<cld> &t,int idx=0,int diff=1){
+        int i,N=v.size();
+        if(idx+diff>=N){
+            f[idx]=v[idx];
+            return;
+        }
+        int diff_2=diff<<1;
+        int M=N/diff_2;
+        cld w2=w*w;
+        fft(v,w2,t,f,idx,diff_2);
+        fft(v,w2,t,f,idx+diff,diff_2);
+        cld x=1;
+        rep(i,0,M){
+            f[idx+diff*i]=(t[idx+diff_2*i]+x*t[idx+diff+diff_2*i]);
+            f[idx+diff*(i+M)]=(t[idx+diff_2*i]-x*t[idx+diff+diff_2*i]);
+            x=x*w;
+        }
+    }
+    void polynomial_multiply(vector<cld> &a,vector<cld> &b,vector<cld> &output){
+        static vector<cld> t1,t2;
+        int n=a.size(),m=n,i;
+        if(!ispowerof2(n)) m<<=1;
+        m=nextpowerof2(m);
+        a.resize(m);b.resize(m);
+        t1.resize(m);t2.resize(m);output.resize(m);
+        fill(a.begin()+n, a.end(), 0);
+        fill(b.begin()+n, b.end(), 0);
+        cld w=nthroot(m);
+        fft(a,w,t1,output);
+        fft(b,w,t2,output);
+        rep(i,0,m)
+            t1[i]=(t1[i]*t2[i]);
+        cld w_inv=ld(1)/w;
+        fft(t1,w_inv,output,t2);
+        ld inv_m=ld(1)/m;
+        rep(i,0,m){
+            output[i]=(output[i]*inv_m);
+        }
+        //Resizing original vectors
+        output.resize(n+n);
+        a.resize(n);
+        b.resize(n);
+    }
+};
+]]></text>
+  </snippet>
+</snippets>

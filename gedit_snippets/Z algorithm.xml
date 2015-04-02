@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>zalgo</tag>
+    <description>Z algorithm</description>
+    <text><![CDATA[
+void z_algorithm(const char *s,int N,int *z){
+    z[0]=N;
+    int l,r,k;
+    l=1;r=0;
+    rep(k,1,N+1){
+        if(k<=r && k+z[k-l]<=r)
+            z[k]=z[k-l];
+        else{
+            l=k;r=max(l-1,r);
+            while(r+1<N && s[r+1]==s[r-l+1])
+                r++;
+            z[k]=r-l+1;
+        }
+    }
+}
+]]></text>
+  </snippet>
+</snippets>

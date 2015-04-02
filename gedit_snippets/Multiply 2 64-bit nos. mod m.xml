@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>mul</tag>
+    <description>Multiply 2 64-bit nos. mod m</description>
+    <text><![CDATA[
+ll mul(ll a,ll b,ll mod){
+    //Assuming a,b,mod >=0; a,b<mod
+    ll res=0;
+    while(b){
+        if(b&1){
+            res=(res+a);
+            if(res>=mod)
+                res-=mod;
+        }
+        a=(a<<1);
+        if(a>=mod){
+            a%=mod;
+        }
+        b>>=1;
+    }
+    return res;
+}
+]]></text>
+  </snippet>
+</snippets>

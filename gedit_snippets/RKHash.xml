@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>rkhash</tag>
+    <description>RKHash</description>
+    <text><![CDATA[
+class RKHasher{
+    const char *s;
+    int N,p,mod;
+    int *h;
+    ll *pow;
+public:
+    RKHasher(const char *s,int N,int p,int mod):s(s),N(N),p(p),mod(mod){
+        h = new int[N];pow=new ll[N+1];
+        h[0]=s[0];pow[0]=1;
+        int i;
+        rep(i,1,N){
+            h[i]=(ll(h[i-1])*p+s[i])%mod;
+            pow[i]=(pow[i-1]*p)%mod;
+        }
+        pow[i]=(pow[i-1]*p)%mod;
+    }
+    ~RKHasher(){
+        delete[] h;
+        delete[] pow;
+    }
+    int query(int i,int j){
+        int minuend=0;
+        if(i!=0)
+            minuend = (h[i-1]*pow[j-i+1])%mod;
+        int ans=(h[j]-minuend);
+        return ans<0?ans+mod:ans;
+    }
+};
+]]></text>
+  </snippet>
+</snippets>

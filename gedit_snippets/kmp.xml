@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>kmp</tag>
+    <description>kmp</description>
+    <text><![CDATA[
+int *gen_failure(const char *x,int N,int *f){
+    f[0]=0;
+    int i=1,l=0;
+    while(i<N){
+        if(x[i]==x[l])
+            f[i++]=++l;
+        else{
+            if(l==0)
+                f[i++]=0;
+            else
+                l=f[l-1];
+        }
+    }
+    return f;
+}
+
+bool kmp_search(const char *t,int lt,const char *p,int lp,int *f){
+    int i=0,j=0;
+    while(i<lt && j<lp){
+        if(t[i]==p[j])
+            i++,j++;
+        if(j==lp)
+            return true;
+        if(j==lp || t[i]!=p[j]){
+            if(j!=0)
+                j=f[j-1];
+            else
+                i++;
+        }
+    }
+    return false;
+}
+]]></text>
+  </snippet>
+</snippets>
