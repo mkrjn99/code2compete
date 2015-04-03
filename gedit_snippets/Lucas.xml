@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>lucas</tag>
+    <text><![CDATA[
+int invmod(int N,int p){
+    return fastexp<ll,ll,ll>(N,p-2,p);
+}
+
+class LucasModule{
+    //Assumes mod is be prime
+    int mod;
+    vector<int> fac;
+    int Chelper(int m,int n){
+        //Assumes m,n < mod
+        if(m<n)
+            return 0;
+        else if(m==n)
+            return 1;
+        else
+            return ( ( ( ll(fac[m]) * invmod(fac[n],mod) ) % mod ) * invmod(fac[m-n],mod) ) % mod;
+    }
+public:
+    LucasModule(int mod):mod(mod){
+        fac.resize(mod);
+        fac[0]=1;
+        int i;
+        rep(i,1,mod){
+            fac[i]=(ll(fac[i-1])*i)%mod;
+        }
+    }
+    int C(int m,int n){
+        if(m<n)
+            return 0;
+        else if(m==n)
+            return 1;
+        else{
+            ll ans=1;
+            while(m||n){
+                ans=(ans*Chelper(m%mod,n%mod))%mod;
+                m/=mod;n/=mod;
+            }
+            return ans;
+        }
+    }
+};
+]]></text>
+    <description>Lucas</description>
+  </snippet>
+</snippets>
