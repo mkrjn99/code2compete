@@ -2,6 +2,7 @@
 <snippets language="cpp">
   <snippet>
     <tag>lucas</tag>
+    <description>Lucas</description>
     <text><![CDATA[
 int invmod(int N,int p){
     return fastexp<ll,ll,ll>(N,p-2,p);
@@ -45,6 +46,5 @@ public:
     }
 };
 ]]></text>
-    <description>Lucas</description>
   </snippet>
 </snippets>

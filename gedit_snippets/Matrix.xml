@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>matrix</tag>
+    <description>Matrix</description>
+    <text><![CDATA[
+namespace matrix{
+    ll mod;
+    template<class T,int m,int n> class Matrix{
+    public:
+        vector<vector<T> > a;
+        Matrix(){ //Initializes matrix to 0
+            a.resize(m);
+            int i;
+            rep(i,0,m){
+                a[i].resize(n);
+                fill(a[i].begin(), a[i].end(), 0);
+            }
+        }
+        Matrix(const vector<T> &a){ //Initializes in row major form
+            assert(a.size()==m*n);
+            this->a.resize(m);
+            int i,j,k=0;
+            rep(i,0,m){
+                this->a[i].resize(n);
+                rep(j,0,n)
+                    this->a[i][j]=a[k++];
+            }
+        }
+        Matrix(const vector<vector<T> > &a){
+            //Initializes as it is
+            assert(a.size()==m);
+            int i;
+            rep(i,0,m)
+                assert(a[i].size()==n);
+            this->a=a;
+        }
+        template<int p> Matrix<T,m,p> operator*(const Matrix<T,n,p> &b)const{
+            Matrix<T,m,p> res;
+            int i,j,k;
+            rep(i,0,m){
+                rep(j,0,n){
+                    rep(k,0,p){
+                        res.a[i][k]=(res.a[i][k]+a[i][j]*b.a[j][k])%mod;
+                    }
+                }
+            }
+            return res;
+        }
+        void print(){
+            int i,j;
+            rep(i,0,m){
+                rep(j,0,n){
+                    cout<<a[i][j]<<' ';
+                }
+                cout<<endl;
+            }
+        }
+    };
+    template<class T,int d> class SquareMatrix : public Matrix<T,d,d>{
+        typedef Matrix<T,d,d> super_type;
+        typedef SquareMatrix<T,d> this_type;
+    public:
+        SquareMatrix(T x):super_type(){
+            //Initializes to xI where I is identity matrix
+            int i;
+            rep(i,0,d)
+                this->a[i][i]=x;
+        }
+        SquareMatrix(const vector<T> &a):super_type(a){
+            //Initializes in row major form
+        }
+        SquareMatrix(const vector<vector<T> > &a):super_type(a){
+            //Initializes as it is
+        }
+        this_type operator*(const this_type &b)const{
+            super_type tres = super_type(*this)*super_type(b);
+            return this_type(tres.a);
+        }
+        void operator*=(const this_type &b){
+            super_type res=(*this)*b;
+            this->a=res.a;
+        }
+    };
+};
+]]></text>
+  </snippet>
+</snippets>
