@@ -7,14 +7,17 @@
 class union_find{
     //0-indexed
     int n;
-    vector<int> a;
+    vector<int> a,size;
 public:
     union_find(int n):n(n){
         //Initially every element is its own representative.
         a.reserve(n);
+        size.reserve(n);
         int i;
-        rep(i,0,n)
+        rep(i,0,n){
             a.pb(i);
+            size.pb(1);
+        }
     }
     
     /*
@@ -45,8 +48,23 @@ public:
             return false;
         else{
             a[child]=parent;
+            size[parent]+=size[child];
             return true;
         }
+    }
+    
+    /*
+     * Unite the two disjoint sets setting 
+     * any as representative. Here we use size 
+     * heuristic to unite more efficiently.
+     */
+    bool unite_unordered(int a,int b){
+        a = find(a);
+        b = find(b);
+        if(size[a]>size[b])
+            return unite(a,b);
+        else
+            return unite(b,a);
     }
 };
 ]]></text>
