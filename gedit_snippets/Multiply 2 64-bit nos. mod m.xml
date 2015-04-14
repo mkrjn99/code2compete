@@ -13,9 +13,9 @@ ll mul(ll a,ll b,ll mod){
             if(res>=mod)
                 res-=mod;
         }
-        a=(a<<1);
+        a<<=1;
         if(a>=mod){
-            a%=mod;
+            a-=mod;
         }
         b>>=1;
     }
