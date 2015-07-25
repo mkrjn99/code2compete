@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>rmq</tag>
+    <description>RMQ</description>
+    <text><![CDATA[
+template<class T> class RMQ{
+    const vector<T> &a;
+    int N;
+    vector<vector<T> > table;
+public:
+    RMQ(const vector<T> &a):a(a){
+        N=a.size();
+        table.pb(a);
+        int i,j,pre=1,cur=2,pre_idx=0,cur_idx=1;
+        while(cur<=N){
+            table.pb(vector<T>(N));
+            for(i=0,j=pre;j<N;i++,j++){
+                table[cur_idx][i]=min(table[pre_idx][i],table[pre_idx][j]);
+            }
+            pre<<=1;
+            cur<<=1;
+            pre_idx++;
+            cur_idx++;
+        }
+    }
+    inline T query(int i,int j){
+        int t2=31-__builtin_clz(j-i+1);
+        int t=1<<t2;
+        return min(table[t2][i],table[t2][j-t+1]);
+    }
+};
+]]></text>
+  </snippet>
+</snippets>
