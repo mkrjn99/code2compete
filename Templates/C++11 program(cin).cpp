@@ -8,6 +8,8 @@
 #define hell        1000000007
 #define uset        unordered_set
 #define umap        unordered_map
+#define first       ft
+#define second      sc
 using namespace std;
 typedef pair<int,int> pi;
 typedef long long ll;
