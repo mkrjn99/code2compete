@@ -20,7 +20,7 @@ template <class T> T& get(T &n) {
 }
 
 int main() {
-    static int T,N,i,j;
+    int T,N,i,j;
     ios::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);

@@ -17,8 +17,8 @@ typedef pair<int,int> pi;
 typedef long long ll;
 
 template <class T> T& get(T &n) {
-    static int p;
-    static bool f;
+    int p;
+    bool f;
     f=false;
     n = 0;
     do {
@@ -37,7 +37,7 @@ template <class T> T& get(T &n) {
 }
 
 int main() {
-    static int T,N,i,j;
+    int T,N,i,j;
     get(T);
     while(T--) {
 

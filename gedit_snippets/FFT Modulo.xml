@@ -39,7 +39,7 @@ public:
         }
     }
     void polynomial_multiply(vector<T> &a,vector<T> &b,vector<T> &output){
-        static vector<T> t1,t2;
+        vector<T> t1,t2;
         int n=a.size(),m=n,i;
         if(!ispowerof2(n)) m<<=1;
         m=nextpowerof2(m);

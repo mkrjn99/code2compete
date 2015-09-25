@@ -5,9 +5,9 @@
     <description>seive</description>
     <text><![CDATA[
 #define MAXN ${1:MAXN}
-static int A[MAXN+1],p[MAXN],pc;
+int A[MAXN+1],p[MAXN],pc;
 void buildseive(){
-    static int i,j;
+    int i,j;
     for(i=2;i<=MAXN;i++){
         if(!A[i]){
             p[++pc]=i;
