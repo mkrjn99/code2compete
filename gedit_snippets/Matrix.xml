@@ -4,6 +4,7 @@
     <tag>matrix</tag>
     <description>Matrix</description>
     <text><![CDATA[
+
 namespace matrix{
     ll mod;
     template<class T,int m,int n> class Matrix{
@@ -73,9 +74,8 @@ namespace matrix{
         SquareMatrix(const vector<vector<T> > &a):super_type(a){
             //Initializes as it is
         }
-        this_type operator*(const this_type &b)const{
-            super_type tres = super_type(*this)*super_type(b);
-            return this_type(tres.a);
+        template<int p> Matrix<T,d,p> operator*(const Matrix<T,d,p> &b)const{
+            return super_type(*this)*b;
         }
         void operator*=(const this_type &b){
             super_type res=(*this)*b;
