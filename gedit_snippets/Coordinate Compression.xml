@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>compress</tag>
+    <description>Coordinate Compression</description>
+    <text><![CDATA[
+void coordinate_compress(vector<int> &v){// transforms to 1-indexed compressed coordinates
+    int i,N=v.size();
+    vector<int> t(N);
+    copy(v.begin(), v.end(), t.begin());
+    sort(t.begin(), t.end());
+    rep(i,0,N){
+        v[i]=lower_bound(t.begin(), t.end(), v[i])-t.begin()+1;
+    }
+}
+]]></text>
+  </snippet>
+</snippets>
