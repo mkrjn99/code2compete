@@ -6,8 +6,8 @@
     <text><![CDATA[
 
 namespace matrix{
-    ll mod;
     template<class T,int m,int n> class Matrix{
+        typedef Matrix<T,m,n> this_type;
     public:
         vector<vector<T> > a;
         Matrix(){ //Initializes matrix to 0
@@ -42,7 +42,7 @@ namespace matrix{
             rep(i,0,m){
                 rep(j,0,n){
                     rep(k,0,p){
-                        res.a[i][k]=(res.a[i][k]+a[i][j]*b.a[j][k])%mod;
+                        res.a[i][k]=(res.a[i][k]+a[i][j]*b.a[j][k]);
                     }
                 }
             }
@@ -56,6 +56,19 @@ namespace matrix{
                 }
                 cout<<endl;
             }
+        }
+        this_type operator%(const T mod)const{
+            this_type t=*this;
+            int i,j;
+            rep(i,0,m){
+                rep(j,0,n){
+                    t.a[i][j]%=mod;
+                }
+            }
+            return t;
+        }
+        void operator=(const this_type &b){
+            a=b.a;
         }
     };
     template<class T,int d> class SquareMatrix : public Matrix<T,d,d>{
@@ -78,8 +91,38 @@ namespace matrix{
             return super_type(*this)*b;
         }
         void operator*=(const this_type &b){
-            super_type res=(*this)*b;
-            this->a=res.a;
+            static Matrix<T,d,d> m;
+            int i,j,k;
+            rep(i,0,d){
+                rep(j,0,d){
+                    m.a[i][j]=0;
+                    rep(k,0,d){
+                        m.a[i][j]=(m.a[i][j]+this->a[i][k]*b.a[k][j]);
+                    }
+                }
+            }
+            swap(m.a,this->a);
+        }
+        this_type operator%(const T mod)const{
+            this_type t=*this;
+            int i,j;
+            rep(i,0,d){
+                rep(j,0,d){
+                    t.a[i][j]%=mod;
+                }
+            }
+            return t;
+        }
+        void operator%=(const T mod){
+            int i,j;
+            rep(i,0,d){
+                rep(j,0,d){
+                    this->a[i][j]%=mod;
+                }
+            }
+        }
+        void operator=(const super_type &b){
+            this->a=b.a;
         }
     };
 };
