@@ -19,6 +19,41 @@ template <class T> T& get(T &n) {
     return n;
 }
 
+#ifdef TRACE
+template<class T> ostream& printContainer(ostream &o,const T &c){
+    tr(it,c){
+        o<<*it<<' ';
+    }
+    return o;
+}
+
+template<class T> ostream& operator<<(ostream &o,const vector<T> &c){return printContainer(o,c);}
+template<class T> ostream& operator<<(ostream &o,const deque<T> &c){return printContainer(o,c);}
+template<class T> ostream& operator<<(ostream &o,const list<T> &c){return printContainer(o,c);}
+template<class T> ostream& operator<<(ostream &o,const set<T> &c){return printContainer(o,c);}
+template<class T> ostream& operator<<(ostream &o,const uset<T> &c){return printContainer(o,c);}
+template<class T> ostream& operator<<(ostream &o,const multiset<T> &c){return printContainer(o,c);}
+template<class T,class V> ostream& operator<<(ostream &o,const map<T,V> &c){return printContainer(o,c);}
+template<class T,class V> ostream& operator<<(ostream &o,const umap<T,V> &c){return printContainer(o,c);}
+template<class T,class V> ostream& operator<<(ostream &o,const pair<T,V> &c){return (o<<"("<<c.ft<<","<<c.sc<<")");}
+
+#define trace(x)                 cerr << #x << ": " << x << endl;
+#define trace1(x)                cerr << #x << ": " << x << endl;
+#define trace2(x, y)             cerr << #x << ": " << x << " | " << #y << ": " << y << endl;
+#define trace3(x, y, z)          cerr << #x << ": " << x << " | " << #y << ": " << y << " | " << #z << ": " << z << endl;
+#define trace4(a, b, c, d)       cerr << #a << ": " << a << " | " << #b << ": " << b << " | " << #c << ": " << c << " | " << #d << ": " << d << endl;
+#define trace5(a, b, c, d, e)    cerr << #a << ": " << a << " | " << #b << ": " << b << " | " << #c << ": " << c << " | " << #d << ": " << d << " | " << #e << ": " << e << endl;
+#define trace6(a, b, c, d, e, f) cerr << #a << ": " << a << " | " << #b << ": " << b << " | " << #c << ": " << c << " | " << #d << ": " << d << " | " << #e << ": " << e << " | " << #f << ": " << f << endl;
+#else
+#define trace(x)
+#define trace1(x)
+#define trace2(x, y)
+#define trace3(x, y, z)
+#define trace4(a, b, c, d)
+#define trace5(a, b, c, d, e)
+#define trace6(a, b, c, d, e, f)
+#endif
+
 int main() {
     int T,N,i,j;
     ios::sync_with_stdio(0);
