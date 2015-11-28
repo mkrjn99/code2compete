@@ -22,9 +22,13 @@ template <class T> T& get(T &n) {
 
 #ifdef TRACE
 template<class T> ostream& printContainer(ostream &o,const T &c){
+    o<<"[";
     tr(it,c){
-        o<<*it<<' ';
+        o<<*it<<",";
     }
+    if(!c.empty())
+        o<<"\b";
+    o<<"]";
     return o;
 }
 
