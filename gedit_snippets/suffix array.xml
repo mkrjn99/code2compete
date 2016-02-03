@@ -4,104 +4,197 @@
     <tag>sarray</tag>
     <description>suffix array</description>
     <text><![CDATA[
-void radix_sort(vector<pair<pi,int> > &v){
-    int N=v.size(),i;
-    
-    vector<int> t(N+1,0);
-    vector<pair<pi,int> > temp(N);
-    
-    rep(i,0,N)
-        t[v[i].first.second]++;
-    rep(i,1,N+1)
-        t[i]+=t[i-1];
-    for(i=N-1;i>=0;i--){
-        temp[--t[v[i].first.second]]=v[i];
-    }
-    
-    fill(t.begin(),t.end(),0);
-    
-    rep(i,0,N)
-        t[temp[i].first.first]++;
-    rep(i,2,N+1)
-        t[i]+=t[i-1];
-    for(i=N-1;i>=0;i--){
-        v[--t[temp[i].first.first]]=temp[i];
-    }
-}
+namespace dc3{
+    struct triplet{
+        int a[3],idx;
+        triplet(){}
+        triplet(int x,int y,int z){
+            a[0]=x;a[1]=y;a[2]=z;
+        }
+        triplet(int x,int y,int z, int i):idx(i){
+            a[0]=x;a[1]=y;a[2]=z;
+        }
+        bool operator<(const triplet &b)const{
+            if(a[0]!=b.a[0])
+                return a[0]<b.a[0];
+            else if(a[1]!=b.a[1])
+                return a[1]<b.a[1];
+            else
+                return a[2]<b.a[2];
+        }
+        bool operator!=(const triplet &b)const{
+            return (a[0]!=b.a[0])||(a[1]!=b.a[1])||(a[2]!=b.a[2]);
+        }
+    };
 
-struct SuffixArrayStruct{
-    const char *s;
-    int N;
-    vector<int *> v;
-    SuffixArrayStruct(const char *s,int N):s(s),N(N){
-        int i,j;
-        for(j=0;j<=N;){
-            if(j)
-                j<<=1;
-            else
-                j=1;
-            int *t=new int[N];
-            if(j==1){
-                vector<int> v;v.resize(256);
-                rep(i,0,N)
-                    v[s[i]]++;
-                int te=v[0];v[0]=1;
-                rep(i,1,256){
-                    if(v[i]){
-                        int t2=v[i];
-                        v[i]=te+1;
-                        te+=t2;
-                    }
-                }
-                rep(i,0,N)
-                    t[i]=v[s[i]];
-            }
-            else
-                improve(v.back(),j/2,v.back(),t);
-            v.pb(t);
-        }
-    }
-    ~SuffixArrayStruct(){
-        tr(it,v)
-            delete[] *it;
-    }
-    void improve(const int *a,int x,const int *b,int *c){
-        vector<pair<pi,int > > z;
-        z.resize(N);
-        int i,k;
-        rep(i,0,N)
-            z[i] = mp(mp(a[i], ((i+x<N)?b[i+x]:0) ),i);
-        radix_sort(z);
-//        sort(z.begin(), z.end());
-        k=1;
-        c[z[0].second] = k++;
-        rep(i,1,N){
-            if(z[i].first==z[i-1].first)
-                c[z[i].second]=c[z[i-1].second];
-            else
-                c[z[i].second]=k;
-            k++;
-        }
-    }
-    int *suffix_array(int *a){
-        int *r=v.back(),i;
-        rep(i,0,N)
-            a[r[i]-1]=i;
-        return a;
-    }
-    int *lcp(int *a,int *lcp){
-        int *r=v.back(),i,j,k,l=0;lcp[0]=0;
+    void count_sort(vector<triplet> &v,int basis){
+        static
+        vector<triplet> t;
+        t.resize(v.size());
+        int N=v.size(),i,u=0;
         rep(i,0,N){
-            k=r[i]-1;
-            if(k==0)
-                continue;
-            j=a[k-1];
-            while(i+l<N && j+l<N && s[i+l]==s[j+l])
-                l++;
-            lcp[k]=l;
-            if(l>0) l--;
+            u=max(u,v[i].a[basis]);
         }
-        return lcp;
+        vector<int> c(u+1,0);
+        rep(i,0,N){
+            c[v[i].a[basis]]++;
+        }
+        partial_sum(c.begin(), c.end(), c.begin());
+        for(i=N-1;i>=0;i--){
+            t[--c[v[i].a[basis]]]=v[i];
+        }
+        swap(t,v);
+    }
+
+    bool compress(vector<triplet> &b,vector<int> &c){
+        int i,N=b.size();
+        count_sort(b,2);
+        count_sort(b,1);
+        count_sort(b,0);
+        int r=1;
+        bool f=1;
+        rep(i,0,N){
+            if(i!=0 && b[i]!=b[i-1])
+                r=i+1;
+            else if(i!=0)
+                f=0;
+            c[b[i].idx]=r;
+        }
+        return f;
+    }
+
+    void generateSuffixArray(vector<int> &a, vector<int> &sa){
+        // Assumes a[i]>=1 for all i
+        int i,j,k,N=a.size();
+        sa.resize(N);
+        if(N<=2){ // Base cases
+            if(N==0)
+                ;
+            else if(N==1)
+                sa[0]=0;
+            else{
+                assert(N==2);
+                if(a[1]<=a[0]){
+                    sa[0]=1;sa[1]=0;
+                }
+                else{
+                    sa[1]=1;sa[0]=0;
+                }
+            }
+            return;
+        }
+        a.push_back(0);
+        a.push_back(0);
+        a.push_back(0);
+        a.push_back(0);
+        vector<triplet> b;
+        b.reserve(2*N/3+6);
+        for(i=1,k=0;i<=N;i+=3){ // Note the equality sign. It's to ensure clear separation between groups
+            b.push_back(triplet(a[i],a[i+1],a[i+2],k++));
+        }
+        int mark1=k; // Marks the beginning of second group
+        for(i=2;i<N;i+=3){
+            b.push_back(triplet(a[i],a[i+1],a[i+2],k++));
+        }
+        // Now b contains triplets for mod1 and mod2 indices grouped separately
+        int sz=b.size();
+        vector<int> temp_rank(N+3,0); // Contains temporary ranks for mod1 and mod2 indices
+        vector<int> c(sz),tsa(sz); // c will contain ranks of b, tsa will contain suffix array of c
+        bool f=compress(b,c); // O(n), stores coordinate compression of b in c and returns true if all coordinates are distinct
+        if(f){ // c's ar unique. tsa is generated trivially
+            rep(i,0,sz)
+                tsa[c[i]-1]=i;
+        }
+        else{ // c's are not unique, recursive call
+            generateSuffixArray(c,tsa);
+        }
+        rep(i,0,sz){ // Transforming tsa to reflect current array's indices
+            #define transform(x) (x>=mark1)?(3*(x-mark1)+2):(3*(x)+1)
+            tsa[i]=transform(tsa[i]);
+        }
+
+        rep(i,0,sz){ // Setting ranks for mod 1 and mod 2 indices
+            temp_rank[tsa[i]]=i+1;
+        }
+
+        vector<triplet> mod0; // Only doublets are required but to ease out, I have used triplets
+        mod0.reserve(N/3+1);
+        for(i=0;i<N;i+=3){
+            mod0.push_back(triplet(a[i],temp_rank[i+1],0,i));
+        }
+        count_sort(mod0,1);
+        count_sort(mod0,0);
+        // Now mod0 indices are sorted according to chracter and successor's rank
+
+        i=j=k=0;
+
+        while(tsa[j]>=N) // Eliminating dummy indices: very important step
+            j++;
+
+        int sz2=mod0.size();
+        while(i<sz2 && j<sz){ // Merge step
+            if(tsa[j]%3==1){
+                if(mp(a[mod0[i].idx],temp_rank[mod0[i].idx+1])<mp(a[tsa[j]],temp_rank[tsa[j]+1]))
+                    sa[k++]=mod0[i++].idx;
+                else
+                    sa[k++]=tsa[j++];
+            }
+            else{
+                if(triplet(a[mod0[i].idx],a[mod0[i].idx+1],temp_rank[mod0[i].idx+2])<
+                   triplet(a[tsa[j]],a[tsa[j]+1],temp_rank[tsa[j]+2]))
+                    sa[k++]=mod0[i++].idx;
+                else
+                    sa[k++]=tsa[j++];
+            }
+        }
+
+        while(i<sz2){ // Merge residue
+            sa[k++]=mod0[i++].idx;
+        }
+
+        while(j<sz){ // Merge residue
+            sa[k++]=tsa[j++];
+        }
+
+        a.pop_back();
+        a.pop_back();
+        a.pop_back();
+        a.pop_back();
+    }
+
+    void string_to_vector(const string &s,vector<int> &a){
+        int i,N=s.size();
+        a.resize(N);
+        rep(i,0,N)
+            a[i]=s[i];
+    }
+    
+    void generateSuffixArrayInverse(const vector<int> &sa, vector<int> &sa_inv){
+        int i,N=sa.size();
+        sa_inv.resize(N);
+        rep(i,0,N){
+            sa_inv[sa[i]]=i;
+        }
+    }
+    
+    void lcp(const vector<int> &a, const vector<int> &sa, const vector<int> &sa_inv, vector<int> &lcp){
+        int l=0,N=a.size(),i;
+        lcp.resize(N);
+        rep(i,0,N){
+            if(sa_inv[i]){
+                int j=sa[sa_inv[i]-1];
+                while(i+l<N && j+l<N && a[i+l]==a[j+l]){
+                    l++;
+                }
+                lcp[sa_inv[i]]=l;
+                trace3(i,j,l);
+            }
+            else{
+                lcp[0]=0;
+            }
+            if(l>0)
+                l--;
+        }
     }
 };
 ]]></text>
