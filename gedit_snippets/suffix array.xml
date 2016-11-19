@@ -187,7 +187,6 @@ namespace dc3{
                     l++;
                 }
                 lcp[sa_inv[i]]=l;
-                trace3(i,j,l);
             }
             else{
                 lcp[0]=0;
