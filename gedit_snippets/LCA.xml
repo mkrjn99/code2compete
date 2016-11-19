@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>lca</tag>
+    <description>LCA</description>
+    <text><![CDATA[
+struct Tree{
+    int N,root;
+    vector<int> parent;
+    const vector<vector<int>> &adj;
+    vector<int> subtreeSize;
+    vector<int> depth;
+    Tree(int N,int root,const vector<vector<int>> &adj):N(N),root(root),adj(adj){
+        parent.resize(N);
+        subtreeSize.resize(N);
+        depth.resize(N);
+        depth[root]=-1;
+    }
+    void dfsInit(int u,int caller){ // Call with dfsInit(root,root) initally
+        depth[u]=depth[caller]+1;
+        parent[u]=caller;
+        subtreeSize[u]=1;
+        tr(it,adj[u]){
+            int v=*it;
+            if(v==caller) continue;
+            dfsInit(v,u);
+            subtreeSize[u]+=subtreeSize[v];
+        }
+    }
+};
+
+struct LCAUtil{
+    const Tree &t;
+    int N,lgn;
+    vector<vector<int>> ancestor;
+    LCAUtil(const Tree &t):t(t),N(t.N){
+        lgn=33-__builtin_clz(N);
+        ancestor.resize(N);
+        tr(it,ancestor){
+            it->resize(lgn);
+        }
+        preprocess();
+    }
+    void preprocess(){
+        int i,j;
+        rep(i,0,N){
+            ancestor[i][0]=t.parent[i];
+        }
+        rep(j,1,lgn){
+            rep(i,0,N){
+                ancestor[i][j]=ancestor[ancestor[i][j-1]][j-1];
+            }
+        }
+    }
+    int getLCA(int u,int v){
+        if(t.depth[u]<=t.depth[v]){
+            swap(u,v);
+        }
+        int dif=t.depth[u]-t.depth[v];
+        int j=lgn-1,k=1<<j;
+        while(dif){
+            if(k<=dif){
+                dif-=k;
+                u=ancestor[u][j];
+            }
+            k>>=1;
+            j--;
+        }
+        if(u==v){
+            return u;
+        }
+        for(int i=lgn-1;i>=0;i--){
+            if(ancestor[u][i]!=ancestor[v][i]){
+                u=ancestor[u][i];
+                v=ancestor[v][i];
+            }
+        }
+        return ancestor[u][0];
+    }
+};
+]]></text>
+  </snippet>
+</snippets>

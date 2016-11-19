@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>treap</tag>
+    <description>Treap</description>
+    <text><![CDATA[
+template<class T> struct treap_node{
+    T key;
+    int priority;
+    int subtree_size;
+    treap_node *l,*r;
+    treap_node(T key,int priority):key(key),priority(priority),subtree_size(1),l(NULL),r(NULL){}
+    treap_node* add(treap_node *n){
+        if(n->key < key){
+            if(l==NULL)
+                l=n;
+            else
+                l=l->add(n);
+            return fixup();
+        }
+        else{
+            if(r==NULL)
+                r=n;
+            else
+                r=r->add(n);
+            return fixup();
+        }
+    }
+    treap_node* getSmallest(){
+        if(l)
+            return l->getSmallest();
+        else
+            return this;
+    }
+    treap_node* erase(T x){ // Assuming x exists
+        if(x<key)
+            return l->erase(x);
+        else if(x>key)
+            return r->erase(x);
+        else{
+            return trickleDownDelete();
+        }
+    }
+    treap_node* trickleDownDelete(){
+        if(l || r){
+            int lp=(l)?l->priority:-1;
+            int rp=(r)?r->priority:-1;
+            if(lp>rp){
+                node *n=this->cwrotate();
+                n->r=n->r->trickleDownDelete();
+                return n;
+            }
+            else{
+                node *n=this->ccwrotate();
+                n->l=n->l->trickleDownDelete();
+                return n;
+            }
+        }
+        else{
+            delete this;
+            return NULL;
+        }
+    }
+    T getByRank(int k){ // 0-indexed rank
+        int lsize=(n->l)?n->l->subtree_size:0;
+        if(lsize==k){
+            return key;
+        }
+        else if(lsize>k){
+            return l->getByRank(k);
+        }
+        else{
+            return r->getByRank(k-lsize-1);
+        }
+    }
+    treap_node* fixup(){
+        if(l!=NULL && priority < l->priority){
+            return this->cwrotate();
+        }
+        if(r!=NULL && priority < r->priority){
+            return this->ccwrotate();
+        }
+        return this;
+    }
+    treap_node* cwrotate(){
+        treap_node *b,*c,*d;
+        d=this;
+        b=d->l;
+        c=b->r;
+
+        b->r=d;
+        d->l=c;
+
+        setSize(d);
+        setSize(b);
+
+        return b;
+    }
+    treap_node* ccwrotate(){
+        treap_node *b,*c,*d;
+        b=this;
+        d=b->r;
+        c=d->l;
+
+        b->r=c;
+        d->l=b;
+
+        setSize(b);
+        setSize(d);
+
+        return d;
+    }
+    static void setSize(treap_node* n){
+        assert(n!=NULL);
+        int lsize=(n->l)?n->l->subtree_size:0;
+        int rsize=(n->r)?n->r->subtree_size:0;
+        n->subtree_size=lsize+rsize+1;
+    }
+};
+]]></text>
+  </snippet>
+</snippets>

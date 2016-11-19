@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>avl</tag>
+    <description>AVL</description>
+    <text><![CDATA[
+template<class T> class avl_node {
+    T data;
+    int height;
+    avl_node *left,*right;
+public:
+    avl_node(T d,avl_node *l=NULL,avl_node *r=NULL):data(d),height(0),left(l),right(r) {}
+    void update_height() {
+        int lh=(left==NULL)?-1:left->height;
+        int rh=(right==NULL)?-1:right->height;
+        height=max(lh,rh)+1;
+    }
+    avl_node* insert(T x) { //Insert x and return the new head of subtree rooted at 'this'
+        if(x<data)
+            left=(left==NULL)?(new avl_node(x,NULL,NULL)):left->insert(x);
+        else
+            right=(right==NULL)?(new avl_node(x,NULL,NULL)):right->insert(x);
+        update_height();
+        return fixup();
+    }
+    avl_node* find(T x) { //Find x and return node where it is found
+        if(x==data)
+            return this;
+        else if(x<data)
+            return (left==NULL)?NULL:left->find(x);
+        else
+            return (right==NULL)?NULL:right->find(x);
+    }
+    T return_smallest() {
+        avl_node *t=this;
+        while(t->left!=NULL)
+            t=t->left;
+        return t->data;
+    }
+    avl_node* remove(T x) {  //Remove x and return the new head of subtree rooted at 'this'
+        //WARNING:Remove is not tested rigorously!!!
+        if(x==data) {
+            if(right==NULL) {
+                delete this;
+                return left;
+            }
+            else if(left==NULL) {
+                delete this;
+                return right;
+            }
+            else {
+                data=right->return_smallest();
+                right=right->remove(data);
+            }
+        }
+        else if(x<data)
+            left=(left==NULL)?NULL:left->remove(x);
+        else
+            right=(right==NULL)?NULL:right->remove(x);
+        update_height();
+        return fixup();
+    }
+    avl_node* cwrotate() {
+        avl_node *b,*c,*d;
+        d=this;
+        b=d->left;
+        c=b->right;           //Initialize
+        b->right=d;
+        d->left=c;            //Rotate
+        d->update_height();
+        b->update_height();   //Order is important!
+        return b;
+    }
+    avl_node* ccwrotate() {
+        avl_node *b,*c,*d;
+        b=this;
+        d=b->right;
+        c=d->left;                    //Initialize
+        b->right=c;
+        d->left=b;                    //Rotate
+        b->update_height();
+        d->update_height();           //Order is important!
+        return d;
+    }
+    avl_node* fixup() {
+        int lh=(left==NULL)?-1:left->height;
+        int rh=(right==NULL)?-1:right->height;
+        if(lh>rh+1) {
+            int llh=(left->left==NULL)?-1:left->left->height;
+            int lrh=(left->right==NULL)?-1:left->right->height;
+            if(lrh==llh+1)//LR case
+                left=left->ccwrotate();
+            return cwrotate();
+        }
+        else if(rh>lh+1) {
+            int rlh=(right->left==NULL)?-1:right->left->height;
+            int rrh=(right->right==NULL)?-1:right->right->height;
+            if(rlh==rrh+1)//RL case
+                right=right->cwrotate();
+            return ccwrotate();
+        }
+        else
+            return this;    //No fixup required
+    }
+    void inorder() {
+        if(left!=NULL) left->inorder();
+        cout<<data<<endl;
+        if(right!=NULL) right->inorder();
+    }
+    void preorder() {
+        cout<<data<<endl;
+        if(left!=NULL) left->preorder();
+        if(right!=NULL) right->preorder();
+    }
+};
+]]></text>
+  </snippet>
+</snippets>

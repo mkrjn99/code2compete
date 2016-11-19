@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='utf-8'?>
+<snippets language="cpp">
+  <snippet>
+    <tag>hld</tag>
+    <description>HLD</description>
+    <text><![CDATA[
+struct HLDUtil{
+    const Tree &t;
+    int N;
+    LCAUtil l;
+    vector<vector<int>> chains;
+    vector<pi> pos;
+    vector<SegTree> segtrees;
+    HLDUtil(const Tree &t):t(t),N(t.N),l(t),chains(0),pos(N){
+        dfsInit(t.root,-1);
+        int i=0;
+        tr(it,chains){
+            segtrees.push_back(SegTree(chains[i++].size()));
+        }
+    }
+    void dfsInit(int u,int curLabel){
+        assert(curLabel<=int(chains.size()));
+        if(curLabel==-1){
+            curLabel=chains.size();
+            chains.emplace_back();
+        }
+        chains[curLabel].push_back(u);
+        pos[u]=mp(curLabel,chains[curLabel].size()-1);
+        int w=-1;
+        tr(it,t.adj[u]){
+            int v=*it;
+            if(v==t.parent[u]) continue;
+            if(w==-1 || t.subtreeSize[v]>t.subtreeSize[w])
+                w=v;
+        }
+        tr(it,t.adj[u]){
+            int v=*it;
+            if(v==t.parent[u]) continue;
+            dfsInit(v,(v==w)?curLabel:-1);
+        }
+    }
+    void update(int u,int v){
+        int p=l.getLCA(u,v);
+        updateUtil(u,p);
+        updateUtil(v,p);
+    }
+    void updateUtil(int u,int p){ // p is u's ancestor
+        while(pos[u].ft!=pos[p].ft){
+            int curLabel=pos[u].ft;
+            int top=chains[curLabel][0];
+            segtrees[curLabel].update(0,pos[u].sc);
+            u=t.parent[top];
+        }
+        if(u!=p){
+            int curLabel=pos[u].ft;
+            segtrees[curLabel].update(pos[p].sc+1,pos[u].sc);
+        }
+    }
+    // Write query similar to update as above
+};
+]]></text>
+  </snippet>
+</snippets>
